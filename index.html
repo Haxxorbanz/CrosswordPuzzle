@@ -1,53 +1,449 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>Material Design for Bootstrap</title>
-    <!-- MDB icon -->
-    <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
-    <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-    <!-- Google Fonts Roboto -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
-    />
-    <!-- MDB -->
-    <link rel="stylesheet" href="css/mdb.min.css" />
-  </head>
-  <body>
-    <!-- Start your project here-->
-    <div class="container">
-      <div class="d-flex justify-content-center align-items-center" style="height: 100vh">
-        <div class="text-center">
-          <img
-            class="mb-4"
-            src="https://mdbootstrap.com/img/logo/mdb-transparent-250px.png"
-            style="width: 250px; height: 90px"
-          />
-          <h5 class="mb-3">Thank you for using our product. We're glad you're with us.</h5>
-          <p class="mb-3">MDB Team</p>
-          <a
-            class="btn btn-primary btn-lg"
-            data-mdb-ripple-init
-            href="https://mdbootstrap.com/docs/standard/getting-started/"
-            target="_blank"
-            role="button"
-            >Start MDB tutorial</a
-          >
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Category Crossword Generator</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="input-section">
+    <h1>Auto Crossword by Category</h1>
+
+    <label for="category-select"><strong>Select a category:</strong></label>
+    <br />
+    <select id="category-select">
+      <option value="People">People</option>
+      <option value="Things">Things</option>
+      <option value="Food">Food</option>
+      <option value="Animals">Animals</option>
+      <option value="Places">Places</option>
+    </select>
+
+    <br /><br />
+    <button id="generateBtn">Generate Puzzle</button>
+    <button id="downloadPdfBtn" disabled>Download PDF</button>
+    <div id="status"></div>
+  </div>
+
+  <div class="output-section">
+    <div class="grid-container">
+      <h2>Puzzle Grid</h2>
+      <div id="crossword-grid-display"></div>
+    </div>
+    <div class="clues-container">
+      <div class="clues-list">
+        <h2>Across</h2>
+        <ul id="across-clues"></ul>
+      </div>
+      <div class="clues-list">
+        <h2>Down</h2>
+        <ul id="down-clues"></ul>
       </div>
     </div>
-    <!-- End your project here-->
+  </div>
 
-    <!-- MDB -->
-    <script type="text/javascript" src="js/mdb.umd.min.js"></script>
-    <!-- Custom scripts -->
-    <script type="text/javascript"></script>
-  </body>
+  <script>
+    // Word bank with descriptive clues for each category and word
+    const wordBank = {
+  People: [
+    { word: "teacher", clue: "Someone who educates students." },
+    { word: "artist", clue: "A person who creates art." },
+    { word: "singer", clue: "Someone who performs songs." },
+    { word: "doctor", clue: "A medical professional who treats patients." },
+    { word: "pilot", clue: "Person who flies airplanes." },
+    { word: "nurse", clue: "Healthcare worker assisting doctors." },
+    { word: "farmer", clue: "Someone who grows crops or raises animals." },
+    { word: "soldier", clue: "A person who serves in the army." },
+    { word: "engineer", clue: "A person who designs or builds structures or machines." },
+    { word: "chef", clue: "Someone who prepares food professionally." },
+    { word: "fireman", clue: "Someone who extinguishes fires." },
+    { word: "lawyer", clue: "A person who practices law." },
+    { word: "dancer", clue: "A performer who moves to music." },
+    { word: "author", clue: "Someone who writes books or stories." },
+    { word: "athlete", clue: "A person who competes in sports." },
+  ],
+  Things: [
+    { word: "pencil", clue: "An item used for writing or drawing." },
+    { word: "laptop", clue: "A portable personal computer." },
+    { word: "chair", clue: "Furniture designed for sitting." },
+    { word: "mirror", clue: "Reflective glass to see yourself." },
+    { word: "watch", clue: "A device worn to tell time." },
+    { word: "bottle", clue: "A container for liquids." },
+    { word: "camera", clue: "Device used to take photographs." },
+    { word: "window", clue: "An opening in a wall for light and air." },
+    { word: "backpack", clue: "A bag carried on the back." },
+    { word: "keyboard", clue: "A device used to type on a computer." },
+    { word: "notebook", clue: "A book of blank or ruled pages for writing." },
+    { word: "remote", clue: "Used to control a TV or electronic device." },
+    { word: "scissors", clue: "A tool used for cutting paper or fabric." },
+    { word: "lamp", clue: "A device that provides light." },
+    { word: "umbrella", clue: "Used for protection against rain or sun." },
+  ],
+  Food: [
+    { word: "banana", clue: "A long yellow tropical fruit." },
+    { word: "burger", clue: "A sandwich with a meat patty." },
+    { word: "cheese", clue: "Dairy product made from milk." },
+    { word: "donut", clue: "A sweet fried dough treat." },
+    { word: "grapes", clue: "Small round fruits often used to make wine." },
+    { word: "pizza", clue: "A popular Italian dish with cheese and toppings." },
+    { word: "salmon", clue: "A pink fish commonly eaten." },
+    { word: "tomato", clue: "A red fruit used in salads and sauces." },
+    { word: "carrot", clue: "A crunchy orange root vegetable." },
+    { word: "noodles", clue: "Long strands of dough used in many Asian dishes." },
+    { word: "chicken", clue: "A common poultry meat." },
+    { word: "apple", clue: "A round fruit that can be red, green, or yellow." },
+    { word: "bread", clue: "Baked food made from flour and water." },
+    { word: "milk", clue: "A white liquid produced by mammals." },
+    { word: "rice", clue: "A staple grain eaten worldwide." },
+  ],
+  Animals: [
+    { word: "rabbit", clue: "A small furry animal with long ears." },
+    { word: "tiger", clue: "A large striped wild cat." },
+    { word: "whale", clue: "The largest mammal living in the ocean." },
+    { word: "eagle", clue: "A bird of prey with excellent vision." },
+    { word: "zebra", clue: "An African animal with black and white stripes." },
+    { word: "monkey", clue: "A primate known for its agility and playfulness." },
+    { word: "donkey", clue: "A domesticated animal similar to a horse." },
+    { word: "giraffe", clue: "The tallest land animal with a long neck." },
+    { word: "penguin", clue: "A flightless bird that swims in cold seas." },
+    { word: "koala", clue: "An Australian marsupial that eats eucalyptus leaves." },
+    { word: "lion", clue: "The king of the jungle." },
+    { word: "snake", clue: "A legless reptile that slithers." },
+    { word: "frog", clue: "An amphibian known for its jumping and croaking." },
+    { word: "bear", clue: "A large mammal that hibernates." },
+    { word: "horse", clue: "A strong animal used for riding or pulling." },
+  ],
+  Places: [
+    { word: "school", clue: "A place where children go to learn." },
+    { word: "market", clue: "A place where people buy and sell goods." },
+    { word: "palace", clue: "A large royal residence." },
+    { word: "church", clue: "A building for Christian worship." },
+    { word: "island", clue: "Land surrounded by water." },
+    { word: "village", clue: "A small community in a rural area." },
+    { word: "temple", clue: "A place of worship in some religions." },
+    { word: "garden", clue: "An area where plants and flowers grow." },
+    { word: "museum", clue: "A place where historical or artistic items are displayed." },
+    { word: "library", clue: "A quiet place where you can borrow books." },
+    { word: "hospital", clue: "Where people go to receive medical care." },
+    { word: "airport", clue: "A place where planes take off and land." },
+    { word: "beach", clue: "A sandy area next to the sea or ocean." },
+    { word: "hotel", clue: "A place where travelers stay overnight." },
+    { word: "zoo", clue: "A facility where animals are kept for public display." },
+  ],
+};
+
+
+    const gridSize = 15;
+    const emptyChar = "";
+
+    const categorySelect = document.getElementById("category-select");
+    const generateBtn = document.getElementById("generateBtn");
+    const gridDisplay = document.getElementById("crossword-grid-display");
+    const acrossClues = document.getElementById("across-clues");
+    const downClues = document.getElementById("down-clues");
+    const status = document.getElementById("status");
+    const downloadBtn = document.getElementById("downloadPdfBtn");
+
+    function createEmptyGrid(size) {
+      return Array.from({ length: size }, () => Array(size).fill(emptyChar));
+    }
+
+    function shuffleArray(arr) {
+      return arr.sort(() => Math.random() - 0.5);
+    }
+
+    // Place words on the grid trying random positions and directions
+    function placeWords(words) {
+      const grid = createEmptyGrid(gridSize);
+      const placedWords = [];
+      let clueNum = 1;
+
+      const tryRows = shuffleArray([...Array(gridSize).keys()]);
+      const tryCols = shuffleArray([...Array(gridSize).keys()]);
+
+      for (const { word } of words) {
+        const upper = word.toUpperCase();
+        const tryDirections = shuffleArray(["across", "down"]);
+        let placed = false;
+
+        for (const direction of tryDirections) {
+          if (direction === "across") {
+            for (const row of tryRows) {
+              for (const col of tryCols) {
+                if (col + upper.length > gridSize) continue;
+
+                let fits = true;
+                for (let i = 0; i < upper.length; i++) {
+                  const cell = grid[row][col + i];
+                  if (cell !== emptyChar && cell !== upper[i]) {
+                    fits = false;
+                    break;
+                  }
+                }
+
+                if (fits) {
+                  for (let i = 0; i < upper.length; i++) {
+                    grid[row][col + i] = upper[i];
+                  }
+                  placedWords.push({ word: upper, row, col, direction, clueNum });
+                  clueNum++;
+                  placed = true;
+                  break;
+                }
+              }
+              if (placed) break;
+            }
+          } else {
+            for (const col of tryCols) {
+              for (const row of tryRows) {
+                if (row + upper.length > gridSize) continue;
+
+                let fits = true;
+                for (let i = 0; i < upper.length; i++) {
+                  const cell = grid[row + i][col];
+                  if (cell !== emptyChar && cell !== upper[i]) {
+                    fits = false;
+                    break;
+                  }
+                }
+
+                if (fits) {
+                  for (let i = 0; i < upper.length; i++) {
+                    grid[row + i][col] = upper[i];
+                  }
+                  placedWords.push({ word: upper, row, col, direction, clueNum });
+                  clueNum++;
+                  placed = true;
+                  break;
+                }
+              }
+              if (placed) break;
+            }
+          }
+          if (placed) break;
+        }
+      }
+
+      return { grid, placedWords };
+    }
+
+    // Render crossword grid with letters and clue numbers
+    function renderGrid(grid, placedWords) {
+      gridDisplay.innerHTML = "";
+      gridDisplay.style.gridTemplateColumns = `repeat(${grid[0].length}, 30px)`;
+
+      const numberMap = Array.from({ length: gridSize }, () => Array(gridSize).fill(""));
+
+      for (const { row, col, clueNum } of placedWords) {
+        numberMap[row][col] = clueNum;
+      }
+
+      for (let r = 0; r < grid.length; r++) {
+        for (let c = 0; c < grid[r].length; c++) {
+          const letter = grid[r][c];
+          const cell = document.createElement("div");
+          cell.classList.add("grid-cell");
+
+          if (letter === emptyChar) {
+            cell.classList.add("empty");
+          } else {
+            cell.textContent = letter;
+          }
+
+          if (numberMap[r][c]) {
+            const num = document.createElement("div");
+            num.classList.add("clue-number");
+            num.textContent = numberMap[r][c];
+            cell.appendChild(num);
+          }
+
+          gridDisplay.appendChild(cell);
+        }
+      }
+    }
+
+    // Generate descriptive clues from the wordBank
+    function generateClues(placedWords, categoryWords) {
+      acrossClues.innerHTML = "";
+      downClues.innerHTML = "";
+
+      for (const { word, clueNum, direction } of placedWords) {
+        // Find the clue text from the categoryWords dictionary
+        const lowerWord = word.toLowerCase();
+        const foundEntry = categoryWords.find(e => e.word.toLowerCase() === lowerWord);
+        const clueText = foundEntry ? foundEntry.clue : `A ${word.length}-letter word.`;
+
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${clueNum}.</strong> ${clueText}`;
+
+        if (direction === "across") {
+          acrossClues.appendChild(li);
+        } else {
+          downClues.appendChild(li);
+        }
+      }
+    }
+
+    generateBtn.addEventListener("click", () => {
+      const category = categorySelect.value;
+      const categoryWords = wordBank[category];
+      const shuffledWords = shuffleArray([...categoryWords]);
+      const selected = shuffledWords.slice(0, 8); // up to 8 words
+
+      const { grid, placedWords } = placeWords(selected);
+      renderGrid(grid, placedWords);
+      generateClues(placedWords, categoryWords);
+
+      status.textContent = `Generated ${placedWords.length} words from "${category}"`;
+      downloadBtn.disabled = placedWords.length === 0;
+    });
+
+    // Download PDF functionality
+    downloadBtn.addEventListener("click", () => {
+      if (gridDisplay.innerHTML.trim() === "") {
+        alert("Please generate a puzzle first.");
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFontSize(18);
+      doc.text("Category Crossword Puzzle", 14, 20);
+
+      doc.setFontSize(12);
+      doc.text(`Category: ${categorySelect.value}`, 14, 30);
+
+      // Draw grid letters
+      const cellSize = 10;
+      const offsetX = 14;
+      const offsetY = 40;
+
+      const grid = createEmptyGrid(gridSize);
+      // Fill grid with letters from the display for PDF
+      // We'll rebuild grid from placedWords to get uppercase letters:
+      const placedWords = [];
+      for (const li of [...acrossClues.children]) {
+        // parse clueNum from li text
+        const num = parseInt(li.textContent);
+        const clue = li.textContent;
+      }
+      // Instead we keep the grid from last generation by storing globally
+
+      // Let's store last generated grid and placedWords globally:
+      // We'll do this: (see below)
+
+      if (!window.lastPuzzle) {
+        alert("No puzzle data found.");
+        return;
+      }
+      const { grid: lastGrid, placedWords: lastPlaced } = window.lastPuzzle;
+
+      // Draw grid with clue numbers
+      const numberMap = Array.from({ length: gridSize }, () => Array(gridSize).fill(""));
+
+      for (const { row, col, clueNum } of lastPlaced) {
+        numberMap[row][col] = clueNum;
+      }
+
+      // Draw grid background squares
+      for (let r = 0; r < gridSize; r++) {
+        for (let c = 0; c < gridSize; c++) {
+          if (lastGrid[r][c] === emptyChar) {
+            doc.setFillColor(180);
+            doc.rect(offsetX + c * cellSize, offsetY + r * cellSize, cellSize, cellSize, "F");
+          } else {
+            doc.setFillColor(255);
+            doc.rect(offsetX + c * cellSize, offsetY + r * cellSize, cellSize, cellSize, "F");
+          }
+        }
+      }
+
+      // Draw letters
+      doc.setTextColor(0);
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      for (let r = 0; r < gridSize; r++) {
+        for (let c = 0; c < gridSize; c++) {
+          const letter = lastGrid[r][c];
+          if (letter !== emptyChar) {
+            doc.text(letter, offsetX + c * cellSize + cellSize / 3, offsetY + r * cellSize + cellSize * 0.75);
+          }
+        }
+      }
+
+      // Draw clue numbers (small)
+      doc.setFontSize(6);
+      doc.setTextColor(100);
+      for (let r = 0; r < gridSize; r++) {
+        for (let c = 0; c < gridSize; c++) {
+          if (numberMap[r][c]) {
+            doc.text(String(numberMap[r][c]), offsetX + c * cellSize + 1, offsetY + r * cellSize + 3);
+          }
+        }
+      }
+
+      // Draw clues below the grid
+      let clueY = offsetY + gridSize * cellSize + 10;
+      doc.setFontSize(12);
+      doc.setTextColor(0);
+      doc.text("Across", offsetX, clueY);
+      clueY += 8;
+      doc.setFontSize(10);
+      for (const { word, clueNum, direction } of lastPlaced) {
+        if (direction === "across") {
+          const entry = wordBank[categorySelect.value].find(e => e.word.toUpperCase() === word);
+          const clueText = entry ? entry.clue : "";
+          doc.text(`${clueNum}. ${clueText}`, offsetX, clueY);
+          clueY += 6;
+          if (clueY > 280) {
+            doc.addPage();
+            clueY = 20;
+          }
+        }
+      }
+
+      clueY += 10;
+      doc.setFontSize(12);
+      doc.text("Down", offsetX, clueY);
+      clueY += 8;
+      doc.setFontSize(10);
+      for (const { word, clueNum, direction } of lastPlaced) {
+        if (direction === "down") {
+          const entry = wordBank[categorySelect.value].find(e => e.word.toUpperCase() === word);
+          const clueText = entry ? entry.clue : "";
+          doc.text(`${clueNum}. ${clueText}`, offsetX, clueY);
+          clueY += 6;
+          if (clueY > 280) {
+            doc.addPage();
+            clueY = 20;
+          }
+        }
+      }
+
+      doc.save(`crossword_${categorySelect.value}.pdf`);
+    });
+
+    // Store last generated puzzle globally for PDF export
+    let lastPuzzle = null;
+    generateBtn.addEventListener("click", () => {
+      const category = categorySelect.value;
+      const categoryWords = wordBank[category];
+      const shuffledWords = shuffleArray([...categoryWords]);
+      const selected = shuffledWords.slice(0, 8); // up to 8 words
+
+      const { grid, placedWords } = placeWords(selected);
+      renderGrid(grid, placedWords);
+      generateClues(placedWords, categoryWords);
+
+      status.textContent = `Generated ${placedWords.length} words from "${category}"`;
+      downloadBtn.disabled = placedWords.length === 0;
+
+      lastPuzzle = { grid, placedWords };
+      window.lastPuzzle = lastPuzzle;
+    });
+  </script>
+</body>
 </html>
