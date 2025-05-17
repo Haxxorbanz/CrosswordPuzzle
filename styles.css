@@ -2,8 +2,17 @@ body {
     font-family: 'Georgia', serif;
     line-height: 1.6;
     margin: 10px;
-    background-color: #fdfdfd;
-    color: #111;
+    background-color: lightgray;
+    color: #2b1e0f;
+    background-color: #fdf6e3; /* Fallback beige tone */
+    background-image: url('https://www.bing.com/th?id=OIP.5EC6D07EE32BB84EBE78508930EF7962672CB156&pid=Api&rs=1'); /* Realistic old newspaper texture */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+    border: 2px solid #d4c5a1;
+    filter: sepia(0.15) contrast(1.05);
 }
 
 h1, h2 {
@@ -13,6 +22,7 @@ h1, h2 {
     margin-bottom: 10px;
     font-weight: bold;
     font-family: 'Times New Roman', Times, serif;
+    text-shadow: 1px 1px 0 #eee;
 }
 
 .input-section, .output-section {
