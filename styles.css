@@ -317,3 +317,103 @@ button:disabled {
         display: none;
     }
 }
+
+.banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f5f0e6;
+    border-bottom: 2px solid #d4c5a1;
+    padding: 10px 20px;
+    font-family: 'Georgia', serif;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    gap: 15px;
+}
+
+.banner-icon {
+    height: 50px;
+    width: auto;
+}
+
+.banner-text {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.banner-text h1 {
+    margin: 0;
+    font-size: 2em;
+    color: #333;
+}
+
+.banner-text p {
+    margin: 0;
+    font-style: italic;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.moon-toggle {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #333;
+    transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.moon-toggle:hover {
+    transform: scale(1.2);
+    color: #000;
+}
+
+/* Footer Style */
+footer {
+    text-align: center;
+    font-size: 0.8em;
+    margin: 30px 0 10px;
+    color: #555;
+}
+
+/* Animation for crossword cells */
+.grid-cell {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Dark Mode Toggle Styles */
+body.dark-mode {
+    background-color: #1e1e1e;
+    color: #ddd;
+}
+
+body.dark-mode .input-section,
+body.dark-mode .output-section,
+body.dark-mode .clues-list {
+    background-color: #2a2a2a;
+    color: #eee;
+    border-color: #555;
+}
+
+body.dark-mode textarea {
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #666;
+}
+
+body.dark-mode button {
+    background-color: #555;
+    color: #fff;
+}
+body.dark-mode button:hover {
+    background-color: #777;
+}
+
+body.dark-mode .grid-cell {
+    border-color: #888;
+}
+
