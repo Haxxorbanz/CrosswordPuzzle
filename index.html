@@ -9,45 +9,46 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-    <h1>Simple Crossword Maker</h1>
 
-    <div class="input-section">
-        <h2>Enter Words and Definitions</h2>
-        <p>Enter one word and its definition per line, separated by a space.</p>
-        <p>Format: <code>WORD Definition goes here</code> (WORD must be letters only)</p>
-        <textarea id="wordInput" rows="10" cols="50" placeholder="PYTHON A popular programming language
-GRID A network of lines
-CODE Instructions for a computer"></textarea>
-        <br>
-        <button id="generateBtn">Generate Crossword</button>
-        <button id="downloadPdfBtn" disabled>Download PDF</button> <!-- Added PDF button, initially disabled -->
-        <p id="status"></p>
+      <!-- Header -->
+  <header class="header-bar">
+    <h1>CrosswordPuzzle</h1>
+  </header>
+
+
+<div class="blue-container">
+  <div class="output-section">
+    <!-- Left side: Grid -->
+    <div class="grid-container">
+      <h2>Crossword Grid</h2>
+      <div id="crossword-grid-display"></div>
     </div>
 
-    <div class="output-section">
-        <div class="grid-container">
-            <h2>Crossword Grid</h2>
-            <!-- Container for the grid display -->
-            <div id="crossword-grid-display">
-                <!-- Grid will be generated here by JavaScript -->
-            </div>
-        </div>
-
-        <div class="clues-container">
-            <div class="clues-list">
-                <h2>Across</h2>
-                <ul id="across-clues">
-                     <!-- Across clues will be generated here -->
-                </ul>
-            </div>
-            <div class="clues-list">
-                <h2>Down</h2>
-                <ul id="down-clues">
-                     <!-- Down clues will be generated here -->
-                </ul>
-            </div>
-        </div>
+    <!-- Right side: Clues -->
+    <div class="clues-container">
+      <div class="clues-list">
+        <h2>Across</h2>
+        <ul id="across-clues"></ul>
+      </div>
+      <div class="clues-list">
+        <h2>Down</h2>
+        <ul id="down-clues"></ul>
+      </div>
     </div>
+  </div>
+
+
+<!-- Bottom full-width prompt section -->
+<div class="input-section full-width-input">
+  <h2>Build Your Puzzle</h2>
+  <p>Type each word and its definition, separated by a space.</p>
+  <p>Format: <code>WORD Definition of the word</code></p>
+  <textarea id="wordInput" rows="10" placeholder="PYTHON A popular programming language&#10;GRID A network of lines&#10;CODE Instructions for a computer"></textarea>
+  <br>
+  <button id="generateBtn">Generate Crossword</button>
+  <button id="downloadPdfBtn" disabled>Download PDF</button>
+  <p id="status"></p>
+</div>
 
     <script src="script.js"></script>
 </body>
