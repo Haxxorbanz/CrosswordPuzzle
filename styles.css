@@ -280,6 +280,10 @@ button:disabled {
         flex: 1.5;
     }
 
+     .clues-container {
+        flex: 1.5;
+    }
+
     .clues-list {
         width: 100%;
     }

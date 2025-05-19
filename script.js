@@ -720,3 +720,4 @@ generateBtn.addEventListener('click', () => {
 
 // Add listener for the PDF download button
 downloadPdfBtn.addEventListener('click', generateAndDownloadPdf);
+downloadPdfBtn.addEventListener('click', generateAndDownloadPdf);
