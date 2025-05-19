@@ -21,6 +21,24 @@ let currentCrosswordData = null; // To hold { trimmedGrid, trimmedCluePos, acros
 
 // --- Helper Functions ---
 
+ const toggleBtn = document.getElementById('darkModeToggle');
+
+  // Apply saved dark mode preference on page load
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('messenger-dark');
+  }
+
+  // Toggle dark mode on icon click
+  toggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('messenger-dark');
+    // Save preference
+    if (document.body.classList.contains('messenger-dark')) {
+      localStorage.setItem('theme', 'dark');
+    } else {
+      localStorage.setItem('theme', 'light');
+    }
+  });
+
 function parseInput() {
     const lines = wordInput.value.trim().split('\n');
     const wordsDefinitions = {};
@@ -47,21 +65,27 @@ function parseInput() {
         }
     });
 
-    if (errors.length > 0) {
-        statusP.style.color = '#d9534f'; // Error color
-        statusP.textContent = "Input errors:\n" + errors.join('\n');
-        downloadPdfBtn.disabled = true; // Disable PDF button on error
-        return null;
-    }
-    if (Object.keys(wordsDefinitions).length === 0) {
-         statusP.style.color = '#d9534f';
-         statusP.textContent = "No valid words entered.";
-         downloadPdfBtn.disabled = true;
-         return null;
-    }
+    // Clear previous classes
+statusP.classList.remove('error', 'success');
 
-    statusP.textContent = ''; // Clear previous errors/status
-    return wordsDefinitions;
+if (errors.length > 0) {
+    statusP.classList.add('error');
+    statusP.textContent = "Input errors:\n" + errors.join('\n');
+    downloadPdfBtn.disabled = true;
+    return null;
+}
+
+if (Object.keys(wordsDefinitions).length === 0) {
+    statusP.classList.add('error');
+    statusP.textContent = "No valid words entered.";
+    downloadPdfBtn.disabled = true;
+    return null;
+}
+
+// Optional: Success state
+statusP.classList.add('success');
+statusP.textContent = "Successfully placed " + Object.keys(wordsDefinitions).length + " words.";
+return wordsDefinitions;
 }
 
 function sortWords(wordsDefs) {

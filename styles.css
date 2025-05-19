@@ -21,13 +21,19 @@ body {
     background-color: #3b82f6;
     padding: 15px 30px;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between; /* KEY: space between left and right items */
     align-items: center;
-    max-width: 1100px;       /* Same as .blue-container */
+    max-width: 1100px;
     width: 100%;
     border-radius: 12px;
-    margin: 0 auto 20px;     /* Center horizontally */
+    margin: 0 auto 20px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .header-bar h1 {
@@ -37,7 +43,121 @@ body {
     margin: 0;
 }
 
+.header-icon {
+    height: 40px;
+    width: auto;
+}
 
+.dark-toggle-icon {
+    height: 35px;
+    width: auto;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.dark-toggle-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Messenger-style enhanced dark mode */
+body.messenger-dark {
+    background-color: #0b0b15;
+    color: #f1f1f1;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Header bar */
+body.messenger-dark .header-bar {
+    background-color: #1e1e2f;
+    border-bottom: 2px solid #2c2c44;
+}
+
+/* Header title */
+body.messenger-dark .header-bar h1 {
+    color: #ffffff;
+}
+
+/* Input and output sections */
+body.messenger-dark .input-section,
+body.messenger-dark .output-section,
+body.messenger-dark .clues-list,
+body.messenger-dark #status {
+    background-color: #1e1e2f;
+    color: #f1f1f1;
+    border: 1px solid #2a2a3d;
+    border-radius: 8px;
+}
+
+/* Clue section */
+body.messenger-dark .clues-list h2 {
+    color: #3b82f6;
+}
+
+body.messenger-dark .clues-list li {
+    color: #f1f1f1;
+}
+
+/* Textarea */
+body.messenger-dark textarea {
+    background-color: #2b2b3f;
+    color: #ffffff;
+    border: 1px solid #444;
+    border-radius: 5px;
+}
+
+/* Buttons */
+body.messenger-dark button {
+    background-color: #3b3b4f;
+    color: #ffffff;
+    border: 1px solid #4c4c60;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+body.messenger-dark button:hover {
+    background-color: #3b82f6;
+    color: #ffffff;
+}
+
+/* Crossword Grid */
+body.messenger-dark .grid-cell {
+    background-color: #1a1a2a;
+    border: 1px solid #3b82f6;
+    color: #ffffff;
+}
+
+body.messenger-dark .letter-cell {
+    background-color: #4b5563;
+    color: #ffffff;
+}
+
+body.messenger-dark #status.success {
+    color: #60d394 !important; /* green in dark mode */
+}
+
+body.messenger-dark #status.error {
+    color: #ff6b6b !important; /* soft red in dark mode */
+}
+
+/* Clue numbers */
+body.messenger-dark .clue-number {
+    color: #3b82f6;
+}
+
+/* Toggle icon brightness */
+body.messenger-dark .dark-toggle-icon {
+    filter: brightness(1.2);
+}
+
+/* Smooth transition */
+.input-section,
+.output-section,
+textarea,
+button,
+.grid-cell,
+.letter-cell,
+.header-bar {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
 
 /* Typography */
 h1 {
@@ -113,6 +233,15 @@ button:disabled {
     margin-top: 15px;
     font-weight: bold;
     color: #4b5563;
+    white-space: pre-line;
+}
+
+#status.success {
+    color: #4b5563 !important; /* blue in light mode */
+}
+
+#status.error {
+    color: #d9534f !important; /* red in light mode */
 }
 
 /* Blue Container */
@@ -292,4 +421,24 @@ button:disabled {
         width: 30px;
         height: 30px;
     }
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    font-size: 0.9rem;
+    color: #6b7280; /* gray-600 */
+    background-color: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+}
+
+/* Dark Mode Footer */
+body.messenger-dark footer {
+    background-color: #1e1e2f;
+    color: #9ca3af; /* lighter gray */
+    border-top: 1px solid #2c2c44;
 }
