@@ -12,6 +12,169 @@ const gridDisplayElement = document.getElementById('crossword-grid-display');
 const acrossCluesElement = document.getElementById('across-clues');
 const downCluesElement = document.getElementById('down-clues');
 
+const predefinedCategories = {
+  people: {
+    TEACHER: "A person who educates students",
+    DOCTOR: "A person who treats the sick",
+    ARTIST: "A person who creates art",
+    FARMER: "A person who grows crops",
+    SINGER: "A person who performs songs",
+    ENGINEER: "A person who designs and builds things",
+    LAWYER: "A person who practices law",
+    NURSE: "A person who assists doctors",
+    PILOT: "Flies airplanes",
+    ACTOR: "Performs in movies or plays",
+    CHEF: "Cooks in a restaurant",
+    SCIENTIST: "Studies how the world works",
+    POLICE: "Keeps the public safe",
+    FIREMAN: "Puts out fires",
+    JUDGE: "Makes legal decisions",
+    ATHLETE: "Competes in sports",
+    DANCER: "Performs dance",
+    WRITER: "Creates stories or books",
+    PAINTER: "Creates paintings",
+    DIRECTOR: "Leads film or theater",
+    DESIGNER: "Creates clothing or spaces",
+    VETERINARIAN: "Animal doctor",
+    BARBER: "Cuts hair",
+    PHOTOGRAPHER: "Takes professional photos",
+    REPORTER: "Reports news",
+    MUSICIAN: "Plays instruments",
+    TAILOR: "Makes or alters clothes",
+    MECHANIC: "Repairs vehicles",
+    ASTRONAUT: "Travels in space",
+    PROGRAMMER: "Writes computer code"
+  },
+  things: {
+    TABLE: "A piece of furniture with a flat top",
+    PHONE: "A device used to call others",
+    CLOCK: "A device that tells time",
+    CHAIR: "Something you sit on",
+    BOOK: "A written or printed work",
+    PEN: "Used for writing",
+    PENCIL: "Another writing tool",
+    FAN: "Cools down a room",
+    BOTTLE: "Holds liquids",
+    LAMP: "Provides light",
+    WINDOW: "Transparent part of a wall",
+    DOOR: "Used to enter a room",
+    BED: "You sleep on it",
+    KEY: "Unlocks something",
+    COMPUTER: "Used for computing",
+    MONITOR: "Displays output",
+    MOUSE: "Computer input device",
+    KEYBOARD: "Used to type",
+    BACKPACK: "Used to carry things",
+    UMBRELLA: "Used when it rains",
+    REMOTE: "Used to control TV",
+    CUP: "Used to drink",
+    PLATE: "Holds food",
+    SOFA: "Comfortable seat",
+    PILLOW: "Supports the head",
+    BLANKET: "Keeps you warm",
+    TOWEL: "Used to dry things",
+    BATTERY: "Stores electric energy",
+    WATCH: "Worn on the wrist to tell time",
+    NOTEBOOK: "Used for notes"
+  },
+  food: {
+    APPLE: "A sweet red fruit",
+    BREAD: "Made from flour and water",
+    RICE: "A staple food in many countries",
+    EGG: "Laid by hens, used in cooking",
+    FISH: "Lives in water, often eaten",
+    MILK: "Comes from cows",
+    MEAT: "Animal flesh used as food",
+    CHEESE: "Made from milk",
+    PIZZA: "Flatbread with toppings",
+    BURGER: "Meat sandwich",
+    SALAD: "Mixed vegetables",
+    ORANGE: "Citrus fruit",
+    BANANA: "Long yellow fruit",
+    GRAPE: "Small round fruit",
+    PEAR: "Green and sweet fruit",
+    TOMATO: "Used in sauces",
+    ONION: "Adds flavor",
+    CARROT: "Orange vegetable",
+    POTATO: "Root vegetable",
+    CHICKEN: "Common meat",
+    BEEF: "Meat from cows",
+    SAUSAGE: "Seasoned ground meat",
+    PANCAKE: "Flat cake cooked on a griddle",
+    CEREAL: "Grain-based breakfast",
+    YOGURT: "Fermented milk",
+    ICECREAM: "Frozen dessert",
+    DONUT: "Fried sweet snack",
+    COOKIE: "Baked sweet treat",
+    CAKE: "Dessert for celebrations",
+    SANDWICH: "Food between bread"
+  },
+  animals: {
+    DOG: "A loyal pet",
+    CAT: "A small domesticated carnivore",
+    HORSE: "Used for riding or farm work",
+    BIRD: "Has wings and can fly",
+    FROG: "An amphibian that jumps",
+    LION: "King of the jungle",
+    TIGER: "Striped big cat",
+    ELEPHANT: "Largest land animal",
+    MONKEY: "Tree-climbing animal",
+    SNAKE: "Slithers on the ground",
+    BEAR: "Large and furry",
+    WOLF: "Wild dog",
+    ZEBRA: "Striped horse",
+    GIRAFFE: "Has a long neck",
+    DEER: "Has antlers",
+    FOX: "Clever forest animal",
+    RABBIT: "Hops around",
+    MOUSE: "Small rodent",
+    WHALE: "Huge sea mammal",
+    DOLPHIN: "Smart sea creature",
+    SHARK: "Dangerous sea predator",
+    TURTLE: "Has a shell",
+    CRAB: "Walks sideways",
+    OCTOPUS: "Has eight arms",
+    PARROT: "Colorful talking bird",
+    OWL: "Nocturnal bird",
+    PENGUIN: "Cannot fly but swims",
+    KOALA: "Lives in trees",
+    KANGAROO: "Jumps and has a pouch",
+    CAMEL: "Desert animal with humps"
+  },
+  places: {
+    SCHOOL: "A place for learning",
+    MARKET: "Where people buy and sell",
+    CHURCH: "A place of worship",
+    HOSPITAL: "Where people get medical help",
+    LIBRARY: "A place with books",
+    PARK: "A place to relax",
+    ZOO: "Where animals are kept",
+    AIRPORT: "Planes land and take off",
+    STATION: "Where trains stop",
+    HOTEL: "Place to stay temporarily",
+    RESTAURANT: "Serves food",
+    MALL: "Shopping center",
+    CINEMA: "Watch movies",
+    THEATER: "Live performances",
+    BANK: "Keeps your money",
+    OFFICE: "Where people work",
+    MUSEUM: "Displays art or history",
+    BEACH: "Where the sea meets land",
+    FOREST: "Lots of trees",
+    DESERT: "Hot, sandy place",
+    MOUNTAIN: "Very high land",
+    LAKE: "Inland body of water",
+    RIVER: "Flows into the sea",
+    BRIDGE: "Connects two places",
+    CASTLE: "Old stone fortress",
+    FARM: "Where crops and animals are raised",
+    GARDEN: "Where plants grow",
+    TEMPLE: "Religious place",
+    VILLAGE: "Small community",
+    CITY: "Large populated area"
+  }
+};
+
 // --- jsPDF Setup ---
 // Ensure jsPDF is loaded before this script runs (included in HTML via CDN)
 const { jsPDF } = window.jspdf; // Get the jsPDF constructor from the window.jspdf object
@@ -693,9 +856,18 @@ generateBtn.addEventListener('click', () => {
     statusP.textContent = ''; // Clear status
 
     // 2. Parse Input
-    const wordsDefs = parseInput();
+
+    let wordsDefs = parseInput();
     if (!wordsDefs) {
-        return; // Stop if parsing failed (status already set)
+  const selectedCategory = document.getElementById('categorySelect').value;
+  if (selectedCategory && predefinedCategories[selectedCategory]) {
+    wordsDefs = getLimitedWords(predefinedCategories[selectedCategory], 10);
+        statusP.classList.remove('error');
+        statusP.classList.add('success');
+        statusP.textContent = `Using default words for category: ${selectedCategory.toUpperCase()}`;
+    } else {
+        return; // Parsing failed and no valid category selected
+    }
     }
 
     // 3. Show "Generating..." message (using timeout to allow UI update)
