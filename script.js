@@ -470,23 +470,28 @@ let currentCrosswordData = null; // To hold { trimmedGrid, trimmedCluePos, acros
 
 // --- Helper Functions ---
 
- const toggleBtn = document.getElementById('darkModeToggle');
+    // Toggle dark mode on icon click
+    const toggleBtn = document.getElementById('darkModeToggle');
 
-  // Apply saved dark mode preference on page load
-  if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('messenger-dark');
-  }
-
-  // Toggle dark mode on icon click
-  toggleBtn.addEventListener('click', () => {
-    document.body.classList.toggle('messenger-dark');
-    // Save preference
-    if (document.body.classList.contains('messenger-dark')) {
-      localStorage.setItem('theme', 'dark');
-    } else {
-      localStorage.setItem('theme', 'light');
+    function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
     }
-  });
+
+    toggleBtn.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    });
+
+    // Initialize theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+    setTheme(savedTheme);
+    } else {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme(prefersDark ? 'dark' : 'light');
+    }
 
 function getLimitedWords(categoryObject, limit = 10) {
     const entries = Object.entries(categoryObject);
