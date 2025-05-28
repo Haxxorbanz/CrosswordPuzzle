@@ -987,9 +987,9 @@ function generateAndDownloadPdf() {
     // Check if jsPDF constructor was successfully obtained
     const jsPDFConstructor = window.jspdf?.jsPDF;
     if (typeof jsPDFConstructor === 'undefined' || !jsPDFConstructor) {
-         alert("Error: jsPDF library is not loaded correctly. Cannot create PDF.");
-         console.error("jsPDF constructor (window.jspdf.jsPDF) is undefined. Check HTML include and script loading order.");
-         return;
+        alert("Error: jsPDF library is not loaded correctly. Cannot create PDF.");
+        console.error("jsPDF constructor (window.jspdf.jsPDF) is undefined. Check HTML include and script loading order.");
+        return;
     }
 
     const { trimmedGrid, trimmedCluePos, acrossClues, downClues } = currentCrosswordData;
@@ -1008,61 +1008,32 @@ function generateAndDownloadPdf() {
         const margin = 15; // Page margin in mm
         const topMarginForTitle = 15; // Space from very top for main title
         const gridTitleSpacing = 8; // Space above each grid's title
-        const gridGap = 10; // Vertical space between the blank and solution grids
         const maxGridWidth = pageWidth - 2 * margin; // Max usable width for grid
         const rows = trimmedGrid.length;
         const cols = trimmedGrid[0].length;
 
         // --- Cell Size Calculation ---
-        // Estimate available height for TWO grids, titles, and gap, leaving space for clues start
-        const approxClueStartYEstimate = pageHeight * 0.6; // Assume clues might start around 60% down
-        const availableHeightForGrids = approxClueStartYEstimate - topMarginForTitle - (gridTitleSpacing * 2) - gridGap;
-        const maxHeightPerGrid = Math.max(availableHeightForGrids / 2, 20); // Ensure at least 20mm height per grid
-
         let cellSize = Math.min(maxGridWidth / cols, 8); // Start by fitting width, max 8mm
-        cellSize = Math.min(cellSize, maxHeightPerGrid / rows); // Then check against available height per grid
         cellSize = Math.max(cellSize, 4); // Minimum cell size 4mm
 
         const gridWidth = cols * cellSize;
         const gridHeight = rows * cellSize;
         const gridStartX = (pageWidth - gridWidth) / 2; // Center the grid horizontally
 
-        // --- Vertical Positions ---
         let currentY = topMarginForTitle;
+
+        // --- Page 1: Crossword Puzzle (Blank Grid and Clues) ---
         doc.setFontSize(18);
         doc.text("Crossword Puzzle", pageWidth / 2, currentY, { align: 'center' });
         currentY += 10; // Space after main title
 
-        // --- Blank Grid ---
+        // Blank Grid
         const blankGridTitleY = currentY + gridTitleSpacing;
         const blankGridStartY = blankGridTitleY + 5; // Small space after title
         doc.setFontSize(14);
         doc.text("Puzzle Grid", gridStartX, blankGridTitleY);
         drawGridOnPdf(doc, trimmedGrid, trimmedCluePos, gridStartX, blankGridStartY, cellSize, false); // false: don't draw letters
         currentY = blankGridStartY + gridHeight; // Update Y to bottom of blank grid
-
-        // --- Solution Grid ---
-        const solutionGridTitleY = currentY + gridGap + gridTitleSpacing;
-        const solutionGridStartY = solutionGridTitleY + 5;
-        // --- Check for page break before drawing solution grid ---
-        if (solutionGridStartY + gridHeight > pageHeight - margin) { // Need space for grid + bottom margin
-            doc.addPage();
-            currentY = margin; // Reset Y for new page
-            // Recalculate Y positions for solution grid on new page
-            const solutionGridTitleY_newPage = currentY + gridTitleSpacing;
-            const solutionGridStartY_newPage = solutionGridTitleY_newPage + 5;
-            doc.setFontSize(14);
-            doc.text("Solution Grid", gridStartX, solutionGridTitleY_newPage);
-            drawGridOnPdf(doc, trimmedGrid, trimmedCluePos, gridStartX, solutionGridStartY_newPage, cellSize, true); // true: draw letters
-            currentY = solutionGridStartY_newPage + gridHeight; // Update Y to bottom of solution grid on new page
-        } else {
-             // Draw on current page
-             doc.setFontSize(14);
-             doc.text("Solution Grid", gridStartX, solutionGridTitleY);
-             drawGridOnPdf(doc, trimmedGrid, trimmedCluePos, gridStartX, solutionGridStartY, cellSize, true); // true: draw letters
-             currentY = solutionGridStartY + gridHeight; // Update Y to bottom of solution grid
-        }
-
 
         currentY += 10; // Add space before clues start
 
@@ -1115,17 +1086,27 @@ function generateAndDownloadPdf() {
 
         // Check if Across finished near the bottom, requiring Down to start on a new page
         if (acrossEndY > pageHeight - 30) {
-             downStartY = margin; // Will trigger addPage in addCluesToPdf
-             downStartX = clueStartX1; // Start in first column on new page
+            downStartY = margin; // Will trigger addPage in addCluesToPdf
+            downStartX = clueStartX1; // Start in first column on new page
         }
-        // Optional: Check if Across took significant vertical space, maybe start Down below it
-        // else if (acrossEndY - currentY > pageHeight / 4) {
-        //     downStartY = acrossEndY + 5; // Start below where Across finished in col 1
-        //     downStartX = clueStartX1;
-        // }
-        // Current logic keeps Down starting in the second column unless Across forces a page break.
 
         addCluesToPdf("Down", downClues, downStartX, downStartY);
+
+        // --- Page 2: Solution Grid ---
+        doc.addPage(); // Add a new page for the solution
+
+        let solutionCurrentY = topMarginForTitle; // Reset Y for the new page
+
+        doc.setFontSize(18);
+        doc.text("Crossword Solution", pageWidth / 2, solutionCurrentY, { align: 'center' });
+        solutionCurrentY += 10; // Space after main title
+
+        const solutionGridTitleY = solutionCurrentY + gridTitleSpacing;
+        const solutionGridStartY = solutionGridTitleY + 5;
+        doc.setFontSize(14);
+        doc.text("Solution Grid", gridStartX, solutionGridTitleY);
+        drawGridOnPdf(doc, trimmedGrid, trimmedCluePos, gridStartX, solutionGridStartY, cellSize, true); // true: draw letters
+        solutionCurrentY = solutionGridStartY + gridHeight; // Update Y to bottom of solution grid
 
         // --- Save PDF ---
         doc.save('crossword.pdf');
@@ -1133,7 +1114,7 @@ function generateAndDownloadPdf() {
         const currentStatus = statusP.textContent;
         // Avoid adding duplicate messages if generating multiple times
         if (!currentStatus.includes("PDF downloaded")) {
-             statusP.textContent = currentStatus + "\nPDF downloaded as crossword.pdf";
+            statusP.textContent = currentStatus + "\nPDF downloaded as crossword.pdf";
         }
 
 
